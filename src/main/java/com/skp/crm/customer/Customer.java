@@ -1,4 +1,4 @@
-package com.skp.crm.customer;
+package com.maieveen.crm.customer;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
