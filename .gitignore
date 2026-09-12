@@ -1,36 +1,52 @@
+# ==============================
 # Maven
+# ==============================
 /target/
 
+# ==============================
 # Java
+# ==============================
 *.class
 *.log
 
+# ==============================
 # IntelliJ IDEA
+# ==============================
 .idea/
 *.iml
 *.iws
 *.ipr
 out/
 
+# ==============================
 # Eclipse
+# ==============================
 .classpath
 .project
 .settings/
 .factorypath
 
+# ==============================
 # VS Code
+# ==============================
 .vscode/
 
+# ==============================
 # macOS
+# ==============================
 .DS_Store
 .AppleDouble
 .LSOverride
 
+# ==============================
 # Windows
+# ==============================
 Thumbs.db
 Desktop.ini
 
-# Spring / local configuration
+# ==============================
+# Spring / Local Configuration
+# ==============================
 *.local.yml
 *.local.yaml
 application-local.yml
@@ -39,28 +55,40 @@ application-local.yaml
 .env.*
 !.env.example
 
-# Docker / local runtime
+# ==============================
+# Docker / Local Runtime
+# ==============================
 *.pid
 *.tmp
 
+# ==============================
 # Terraform
+# ==============================
 **/.terraform/
 **/.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 crash.log
 crash.*.log
+
+# Never commit actual Terraform variables
 **/*.tfvars
 **/*.tfvars.json
+
+# But keep example variable files
 !**/*.tfvars.example
 
-# Terraform override files
+# ==============================
+# Terraform Override Files
+# ==============================
 **/override.tf
 **/override.tf.json
 **/*_override.tf
 **/*_override.tf.json
 
-# OS / editor temporary files
+# ==============================
+# Editor Temporary Files
+# ==============================
 *.swp
 *.swo
 *~
