@@ -1,0 +1,8 @@
+location           = "australiaeast"
+project_name       = "maieveen-crm"
+resource_group_name = "rg-maieveen-crm"
+vm_size            = "Standard_B1s"
+admin_username     = "maieveenadmin"
+ssh_public_key     = "REPLACE_WITH_SSH_PUBLIC_KEY"
+allowed_ssh_cidr   = "REPLACE_WITH_YOUR_PUBLIC_IP/32"
+allowed_http_cidr  = "0.0.0.0/0"
