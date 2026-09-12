@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Platform</title>
+</head>
+<body>
+<h1>CRM Platform</h1>
+<form id="customer-form">
+    <input id="name" placeholder="Name" required>
+    <input id="email" type="email" placeholder="Email">
+    <input id="phone" placeholder="Phone">
+    <button type="submit">Add customer</button>
+</form>
+<h2>Customers</h2>
+<ul id="customers"></ul>
+<script>
+async function loadCustomers() {
+    const response = await fetch('/api/customers');
+    const customers = await response.json();
+    document.getElementById('customers').innerHTML = customers.map(c =>
+        `<li>${c.name} — ${c.email || ''} — ${c.phone || ''} <button onclick="removeCustomer(${c.id})">Delete</button></li>`
+    ).join('');
+}
+async function removeCustomer(id) {
+    await fetch('/api/customers/' + id, { method: 'DELETE' });
+    loadCustomers();
+}
+document.getElementById('customer-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    await fetch('/api/customers', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value
+        })
+    });
+    e.target.reset();
+    loadCustomers();
+});
+loadCustomers();
+</script>
+</body>
+</html>
