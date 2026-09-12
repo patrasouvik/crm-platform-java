@@ -7,7 +7,7 @@
         <version>3.5.5</version>
         <relativePath/>
     </parent>
-    <groupId>com.skp</groupId>
+    <groupId>com.maieveen</groupId>
     <artifactId>crm-platform-java</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>crm-platform-java</name>
