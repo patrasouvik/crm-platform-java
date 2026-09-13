@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin Login - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
+<body class="center-page">
+<main class="card login-card">
+    <div class="brand">SKP LAB CRM</div>
+    <h1>Admin Login</h1>
+    <div class="alert error" th:if="${param.error}">Invalid username or password.</div>
+    <div class="alert success" th:if="${param.logout}">You have been logged out.</div>
+    <form method="post" th:action="@{/crm/login}">
+        <label>Username<input type="text" name="username" autocomplete="username" required></label>
+        <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+        <button class="button" type="submit">Login</button>
+    </form>
+    <a class="back-link" href="/crm">Back to CRM</a>
+</main>
+</body>
+</html>
