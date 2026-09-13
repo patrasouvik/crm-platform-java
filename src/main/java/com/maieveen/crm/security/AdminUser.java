@@ -28,6 +28,9 @@ public class AdminUser {
     @Column(nullable = false, unique = true, length = 100)
     private String username;
 
+    @Column(nullable = false, unique = true, length = 255)
+    private String email;
+
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
@@ -51,8 +54,9 @@ public class AdminUser {
     protected AdminUser() {
     }
 
-    public AdminUser(String username, String passwordHash) {
+    public AdminUser(String username, String email, String passwordHash) {
         this.username = username;
+        this.email = email;
         this.passwordHash = passwordHash;
     }
 
@@ -70,7 +74,11 @@ public class AdminUser {
 
     public Long getId() { return id; }
     public String getUsername() { return username; }
+    public String getEmail() { return email; }
     public String getPasswordHash() { return passwordHash; }
     public boolean isEnabled() { return enabled; }
     public Set<Role> getRoles() { return roles; }
+
+    public void setEmail(String email) { this.email = email; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 }
