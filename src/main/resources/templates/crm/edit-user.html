@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Edit User - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
+<body>
+<header class="topbar"><strong>SKP LAB CRM</strong><div><a href="/crm/admin/users">Existing Users</a><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
+<main class="container narrow">
+    <h1>Edit User</h1>
+    <form class="card form-grid" method="post" th:action="@{/crm/admin/users/{id}/edit(id=${user.id})}" th:object="${user}">
+        <label>First Name<input th:field="*{firstName}" required maxlength="100"></label>
+        <label>Last Name<input th:field="*{lastName}" required maxlength="100"></label>
+        <label>Email<input type="email" th:field="*{email}" required maxlength="255"></label>
+        <label>Phone<input th:field="*{phone}" maxlength="30"></label>
+        <label>Date of Birth<input type="date" th:field="*{dateOfBirth}"></label>
+        <label class="full">Address<input th:field="*{address}" maxlength="255"></label>
+        <label>Suburb<input th:field="*{suburb}" maxlength="100"></label>
+        <label>State<select th:field="*{state}">
+            <option value="">Select</option>
+            <option value="NSW">NSW</option>
+            <option value="VIC">VIC</option>
+            <option value="QLD">QLD</option>
+            <option value="SA">SA</option>
+            <option value="WA">WA</option>
+            <option value="TAS">TAS</option>
+            <option value="NT">NT</option>
+            <option value="ACT">ACT</option>
+        </select></label>
+        <label>Postcode<input th:field="*{postcode}" maxlength="10"></label>
+        <div class="full actions"><button class="button" type="submit">Save Changes</button><a class="button secondary" th:href="@{/crm/admin/users/{id}(id=${user.id})}">Cancel</a></div>
+    </form>
+</main>
+</body>
+</html>
