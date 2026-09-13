@@ -14,7 +14,17 @@
         <label>Date of Birth<input type="date" th:field="*{dateOfBirth}"></label>
         <label class="full">Address<input th:field="*{address}" maxlength="255"></label>
         <label>Suburb<input th:field="*{suburb}" maxlength="100"></label>
-        <label>State<select th:field="*{state}"><option value="">Select</option><option>NSW</option><option>VIC</option><option>QLD</option><option>SA</option><option>WA</option><option>TAS</option><option>NT</option><option>ACT</option></select></label>
+        <label>State<select th:field="*{state}">
+            <option value="">Select</option>
+            <option value="NSW">NSW</option>
+            <option value="VIC">VIC</option>
+            <option value="QLD">QLD</option>
+            <option value="SA">SA</option>
+            <option value="WA">WA</option>
+            <option value="TAS">TAS</option>
+            <option value="NT">NT</option>
+            <option value="ACT">ACT</option>
+        </select></label>
         <label>Postcode<input th:field="*{postcode}" maxlength="10"></label>
         <div class="full actions"><button class="button" type="submit">Save User</button><a class="button secondary" href="/crm/admin">Cancel</a></div>
     </form>
