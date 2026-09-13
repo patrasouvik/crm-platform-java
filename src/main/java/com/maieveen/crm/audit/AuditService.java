@@ -1,5 +1,6 @@
 package com.maieveen.crm.audit;
 
+import com.maieveen.crm.security.AdminUser;
 import com.maieveen.crm.security.AdminUserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,14 @@ public class AuditService {
         }
 
         adminUserRepository.findByUsername(authentication.getName()).ifPresent(adminUser ->
-                auditLogRepository.save(new AuditLog(adminUser, action, entityType, entityId, details))
+                record(adminUser, action, entityType, entityId, details)
         );
+    }
+
+    public void record(AdminUser adminUser, String action, String entityType, Long entityId, String details) {
+        if (adminUser == null) {
+            return;
+        }
+        auditLogRepository.save(new AuditLog(adminUser, action, entityType, entityId, details));
     }
 }
