@@ -56,6 +56,7 @@ public class CrmController {
                                  @RequestParam String newPassword,
                                  @RequestParam String confirmPassword,
                                  Authentication authentication,
+                                 HttpSession session,
                                  Model model) {
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "New password and confirmation do not match.");
@@ -73,6 +74,7 @@ public class CrmController {
         }
 
         auditService.record(authentication, "CHANGE_PASSWORD", "ADMIN_USER", null, "Changed admin password");
+        session.invalidate();
         return "redirect:/crm/login?passwordChanged";
     }
 
@@ -88,7 +90,7 @@ public class CrmController {
     }
 
     @GetMapping("/verify-otp")
-    public String verifyOtpPage(HttpSession session, Model model) {
+    public String verifyOtpPage(HttpSession session) {
         if (session.getAttribute(RESET_EMAIL) == null) {
             return "redirect:/crm/forgot-password";
         }
