@@ -6,8 +6,6 @@ on:
       - main
       - feature/updates
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:
