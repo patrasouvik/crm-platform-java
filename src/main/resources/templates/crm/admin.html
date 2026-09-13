@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin Dashboard - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
+<body>
+<header class="topbar"><strong>SKP LAB CRM</strong><div><span>Admin</span><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
+<main class="container">
+    <h1>Admin Dashboard</h1>
+    <p class="muted">Manage customer records.</p>
+    <div class="tabs">
+        <a class="tab" href="/crm/admin/new-user">1. New User</a>
+        <a class="tab" href="/crm/admin/users">2. Existing User</a>
+    </div>
+</main>
+</body>
+</html>
