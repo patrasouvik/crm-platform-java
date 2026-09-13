@@ -7,11 +7,13 @@
     <h1>Admin Login</h1>
     <div class="alert error" th:if="${param.error}">Invalid username or password.</div>
     <div class="alert success" th:if="${param.logout}">You have been logged out.</div>
+    <div class="alert success" th:if="${param.passwordChanged}">Password changed successfully. Please log in again.</div>
     <form method="post" th:action="@{/crm/login}">
         <label>Username<input type="text" name="username" autocomplete="username" required></label>
         <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
         <button class="button" type="submit">Login</button>
     </form>
+    <p><a class="back-link" href="/crm/forgot-password">Forgot password?</a></p>
     <a class="back-link" href="/crm">Back to CRM</a>
 </main>
 </body>
