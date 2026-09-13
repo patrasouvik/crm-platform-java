@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin Dashboard - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
 <body>
-<header class="topbar"><strong>SKP LAB CRM</strong><div><span>Admin</span><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
+<header class="topbar"><strong>SKP LAB CRM</strong><div><a class="back-link" href="/crm/admin/change-password">Change Password</a><span>Admin</span><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
 <main class="container">
     <h1>Admin Dashboard</h1>
     <div class="success" th:if="${param.saved}">User saved successfully.</div>

@@ -18,6 +18,9 @@ public class AdminUserBootstrap implements CommandLineRunner {
     @Value("${crm.admin.bootstrap.username:admin}")
     private String username;
 
+    @Value("${crm.admin.bootstrap.email:souvik.k.patra@gmail.com}")
+    private String email;
+
     @Value("${crm.admin.bootstrap.password:change-me}")
     private String password;
 
@@ -40,13 +43,21 @@ public class AdminUserBootstrap implements CommandLineRunner {
 
         adminUserRepository.findByUsername(username).ifPresentOrElse(
                 adminUser -> {
+                    boolean changed = false;
                     if (adminUser.getRoles().stream().noneMatch(role -> "ADMIN".equals(role.getName()))) {
                         adminUser.getRoles().add(adminRole);
+                        changed = true;
+                    }
+                    if (email != null && !email.isBlank() && !email.equalsIgnoreCase(adminUser.getEmail())) {
+                        adminUser.setEmail(email.trim().toLowerCase());
+                        changed = true;
+                    }
+                    if (changed) {
                         adminUserRepository.save(adminUser);
                     }
                 },
                 () -> {
-                    AdminUser adminUser = new AdminUser(username, passwordEncoder.encode(password));
+                    AdminUser adminUser = new AdminUser(username, email.trim().toLowerCase(), passwordEncoder.encode(password));
                     adminUser.getRoles().add(adminRole);
                     adminUserRepository.save(adminUser);
                 }

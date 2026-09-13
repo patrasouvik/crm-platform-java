@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verify OTP - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
+<body class="center-page">
+<main class="card login-card">
+    <div class="brand">SKP LAB CRM</div>
+    <h1>Verify OTP</h1>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <p class="muted">Enter the six-digit OTP sent to your registered admin email address. The OTP expires after 10 minutes.</p>
+    <form method="post" th:action="@{/crm/verify-otp}">
+        <label>OTP<input type="text" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required></label>
+        <button class="button" type="submit">Verify OTP</button>
+    </form>
+    <a class="back-link" href="/crm/forgot-password">Request a new OTP</a>
+</main>
+</body>
+</html>
