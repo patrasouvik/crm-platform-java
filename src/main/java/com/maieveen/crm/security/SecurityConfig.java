@@ -41,15 +41,16 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/crm", "/crm/login", "/css/**", "/js/**", "/actuator/health").permitAll()
+                .requestMatchers("/crm", "/crm/login", "/crm/forgot-password", "/crm/verify-otp", "/crm/reset-password",
+                        "/css/**", "/js/**", "/actuator/health").permitAll()
                 .requestMatchers("/crm/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
-            .loginPage("/crm/login")
-            .loginProcessingUrl("/crm/login")
-            .defaultSuccessUrl("/crm/admin", true)
-            .permitAll()
+                .loginPage("/crm/login")
+                .loginProcessingUrl("/crm/login")
+                .defaultSuccessUrl("/crm/admin", true)
+                .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/crm/logout")
