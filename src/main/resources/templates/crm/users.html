@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Existing Users - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
+<body>
+<header class="topbar"><strong>SKP LAB CRM</strong><div><a href="/crm/admin">Dashboard</a><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
+<main class="container">
+    <h1>Existing Users</h1>
+    <form class="search" method="get" action="/crm/admin/users">
+        <input name="q" th:value="${query}" placeholder="Search by name, email or phone">
+        <button class="button" type="submit">Search</button>
+        <a class="button secondary" href="/crm/admin/users">Clear</a>
+    </form>
+    <p class="muted" th:text="${#lists.size(users) + ' user(s) found'}"></p>
+    <div class="table-wrap card">
+        <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Action</th></tr></thead>
+        <tbody><tr th:each="u : ${users}"><td th:text="${u.firstName + ' ' + u.lastName}"></td><td th:text="${u.email}"></td><td th:text="${u.phone}"></td><td><a th:href="@{/crm/admin/users/{id}(id=${u.id})}">View details</a></td></tr>
+        <tr th:if="${#lists.isEmpty(users)}"><td colspan="4" class="muted">No users found.</td></tr></tbody></table>
+    </div>
+</main>
+</body>
+</html>
