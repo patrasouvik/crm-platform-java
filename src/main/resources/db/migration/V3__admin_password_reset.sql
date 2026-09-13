@@ -12,6 +12,7 @@ CREATE TABLE password_reset_token (
     expires_at TIMESTAMP NOT NULL,
     verified_at TIMESTAMP,
     used_at TIMESTAMP,
+    attempts INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL,
     CONSTRAINT fk_password_reset_admin_user
         FOREIGN KEY (admin_user_id) REFERENCES admin_user(id)
