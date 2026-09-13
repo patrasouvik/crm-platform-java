@@ -10,6 +10,11 @@ spring:
   thymeleaf:
     cache: false
 
+crm:
+  admin:
+    username: ${CRM_ADMIN_USERNAME:admin}
+    password: ${CRM_ADMIN_PASSWORD:change-me}
+
 management:
   endpoints:
     web:
