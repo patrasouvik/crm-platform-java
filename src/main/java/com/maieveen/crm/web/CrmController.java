@@ -1,7 +1,9 @@
 package com.maieveen.crm.web;
 
+import com.maieveen.crm.audit.AuditService;
 import com.maieveen.crm.user.CrmUser;
 import com.maieveen.crm.user.CrmUserRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CrmController {
 
     private final CrmUserRepository userRepository;
+    private final AuditService auditService;
 
-    public CrmController(CrmUserRepository userRepository) {
+    public CrmController(CrmUserRepository userRepository, AuditService auditService) {
         this.userRepository = userRepository;
+        this.auditService = auditService;
     }
 
     @GetMapping
@@ -37,7 +41,7 @@ public class CrmController {
     }
 
     @PostMapping("/admin/new-user")
-    public String saveUser(@ModelAttribute("user") CrmUser user, Model model) {
+    public String saveUser(@ModelAttribute("user") CrmUser user, Model model, Authentication authentication) {
         user.setEmail(user.getEmail() == null ? null : user.getEmail().trim().toLowerCase());
         user.setPhone(user.getPhone() == null || user.getPhone().isBlank() ? null : user.getPhone().trim());
 
@@ -52,6 +56,7 @@ public class CrmController {
         }
 
         userRepository.save(user);
+        auditService.record(authentication, "CREATE", "CRM_USER", user.getId(), "Created CRM user");
         return "redirect:/crm/admin?saved";
     }
 
@@ -80,7 +85,7 @@ public class CrmController {
     }
 
     @PostMapping("/admin/users/{id}/edit")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") CrmUser updatedUser, Model model) {
+    public String updateUser(@PathVariable Long id, @ModelAttribute("user") CrmUser updatedUser, Model model, Authentication authentication) {
         CrmUser user = userRepository.findById(id).orElseThrow();
         updatedUser.setEmail(updatedUser.getEmail() == null ? null : updatedUser.getEmail().trim().toLowerCase());
         updatedUser.setPhone(updatedUser.getPhone() == null || updatedUser.getPhone().isBlank() ? null : updatedUser.getPhone().trim());
@@ -107,12 +112,14 @@ public class CrmController {
         user.setState(updatedUser.getState());
         user.setPostcode(updatedUser.getPostcode());
         userRepository.save(user);
+        auditService.record(authentication, "UPDATE", "CRM_USER", user.getId(), "Updated CRM user");
         return "redirect:/crm/admin/users/{id}";
     }
 
     @PostMapping("/admin/users/{id}/delete")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Long id, Authentication authentication) {
         if (userRepository.existsById(id)) {
+            auditService.record(authentication, "DELETE", "CRM_USER", id, "Deleted CRM user");
             userRepository.deleteById(id);
         }
         return "redirect:/crm/admin/users?deleted";
