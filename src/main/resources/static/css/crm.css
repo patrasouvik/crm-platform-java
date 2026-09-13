@@ -36,6 +36,11 @@ input, select { width: 100%; margin-top: 7px; padding: 11px 12px; border: 1px so
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; text-align: left; }
 th { background: #f9fafb; }
+.actions-cell { white-space: nowrap; display: flex; gap: 8px; align-items: center; }
+.icon-button { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d1d5db; border-radius: 7px; background: white; cursor: pointer; font-size: 16px; padding: 0; text-decoration: none; }
+.icon-button:hover { text-decoration: none; opacity: .8; }
+.icon-button.edit { color: #2563eb; }
+.icon-button.delete { color: #dc2626; }
 .details { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 20px; }
 .details div { padding: 16px; border-bottom: 1px solid #e5e7eb; }
 .details span { display: block; color: #6b7280; font-size: 13px; margin-bottom: 5px; }
