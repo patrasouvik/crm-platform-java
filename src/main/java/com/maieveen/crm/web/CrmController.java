@@ -39,7 +39,7 @@ public class CrmController {
     @PostMapping("/admin/new-user")
     public String saveUser(@ModelAttribute("user") CrmUser user) {
         userRepository.save(user);
-        return "redirect:/crm/admin/new-user?saved";
+        return "redirect:/crm/admin?saved";
     }
 
     @GetMapping("/admin/users")
