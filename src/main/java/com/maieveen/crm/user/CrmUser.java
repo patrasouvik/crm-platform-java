@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +21,7 @@ public class CrmUser {
     private String lastName;
     private String email;
     private String phone;
-    private LocalDateTime dateOfBirth;
+    private LocalDate dateOfBirth;
     private String address;
     private String suburb;
     private String state;
@@ -36,9 +37,7 @@ public class CrmUser {
     }
 
     @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    void onUpdate() { updatedAt = LocalDateTime.now(); }
 
     public Long getId() { return id; }
     public String getFirstName() { return firstName; }
@@ -49,8 +48,8 @@ public class CrmUser {
     public void setEmail(String email) { this.email = email; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-    public LocalDateTime getDateOfBirth() { return dateOfBirth; }
-    public void setDateOfBirth(LocalDateTime dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
     public String getSuburb() { return suburb; }
