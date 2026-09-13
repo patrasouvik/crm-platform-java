@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>User Details - SKP Lab CRM</title><link rel="stylesheet" th:href="@{/css/crm.css}"></head>
+<body>
+<header class="topbar"><strong>SKP LAB CRM</strong><div><a href="/crm/admin">Dashboard</a><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
+<main class="container narrow">
+    <h1>User Details</h1>
+    <div class="card details">
+        <div><span>First Name</span><strong th:text="${user.firstName}"></strong></div>
+        <div><span>Last Name</span><strong th:text="${user.lastName}"></strong></div>
+        <div><span>Email</span><strong th:text="${user.email}"></strong></div>
+        <div><span>Phone</span><strong th:text="${user.phone}"></strong></div>
+        <div><span>Date of Birth</span><strong th:text="${user.dateOfBirth}"></strong></div>
+        <div><span>Address</span><strong th:text="${user.address}"></strong></div>
+        <div><span>Suburb</span><strong th:text="${user.suburb}"></strong></div>
+        <div><span>State</span><strong th:text="${user.state}"></strong></div>
+        <div><span>Postcode</span><strong th:text="${user.postcode}"></strong></div>
+        <div><span>Created</span><strong th:text="${user.createdAt}"></strong></div>
+    </div>
+    <a class="button secondary" href="/crm/admin/users">Back to users</a>
+</main>
+</body>
+</html>
