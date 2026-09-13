@@ -1,8 +1,12 @@
 package com.maieveen.crm.web;
 
 import com.maieveen.crm.audit.AuditService;
+import com.maieveen.crm.security.AdminUser;
+import com.maieveen.crm.security.AdminUserRepository;
+import com.maieveen.crm.security.PasswordResetService;
 import com.maieveen.crm.user.CrmUser;
 import com.maieveen.crm.user.CrmUserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +21,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/crm")
 public class CrmController {
 
+    private static final String RESET_ADMIN_ID = "CRM_RESET_ADMIN_ID";
+    private static final String RESET_EMAIL = "CRM_RESET_EMAIL";
+
     private final CrmUserRepository userRepository;
     private final AuditService auditService;
+    private final AdminUserRepository adminUserRepository;
+    private final PasswordResetService passwordResetService;
 
-    public CrmController(CrmUserRepository userRepository, AuditService auditService) {
+    public CrmController(CrmUserRepository userRepository,
+                         AuditService auditService,
+                         AdminUserRepository adminUserRepository,
+                         PasswordResetService passwordResetService) {
         this.userRepository = userRepository;
         this.auditService = auditService;
+        this.adminUserRepository = adminUserRepository;
+        this.passwordResetService = passwordResetService;
     }
 
     @GetMapping
@@ -33,6 +47,104 @@ public class CrmController {
 
     @GetMapping("/admin")
     public String admin() { return "crm/admin"; }
+
+    @GetMapping("/admin/change-password")
+    public String changePassword() { return "crm/change-password"; }
+
+    @PostMapping("/admin/change-password")
+    public String changePassword(@RequestParam String currentPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confirmPassword,
+                                 Authentication authentication,
+                                 Model model) {
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New password and confirmation do not match.");
+            return "crm/change-password";
+        }
+
+        if (!passwordResetService.isValidNewPassword(newPassword)) {
+            model.addAttribute("error", "Password must be at least 12 characters and include a letter, number and special character.");
+            return "crm/change-password";
+        }
+
+        if (!passwordResetService.changePassword(authentication.getName(), currentPassword, newPassword)) {
+            model.addAttribute("error", "Current password is incorrect, or the new password cannot be used.");
+            return "crm/change-password";
+        }
+
+        auditService.record(authentication, "CHANGE_PASSWORD", "ADMIN_USER", null, "Changed admin password");
+        return "redirect:/crm/login?passwordChanged";
+    }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword() { return "crm/forgot-password"; }
+
+    @PostMapping("/forgot-password")
+    public String requestPasswordReset(@RequestParam String email, HttpSession session) {
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+        session.setAttribute(RESET_EMAIL, normalizedEmail);
+        passwordResetService.requestOtp(normalizedEmail);
+        return "redirect:/crm/verify-otp";
+    }
+
+    @GetMapping("/verify-otp")
+    public String verifyOtpPage(HttpSession session, Model model) {
+        if (session.getAttribute(RESET_EMAIL) == null) {
+            return "redirect:/crm/forgot-password";
+        }
+        return "crm/verify-otp";
+    }
+
+    @PostMapping("/verify-otp")
+    public String verifyOtp(@RequestParam String otp, HttpSession session, Model model) {
+        String email = (String) session.getAttribute(RESET_EMAIL);
+        if (email == null || !passwordResetService.verifyOtp(email, otp.trim())) {
+            model.addAttribute("error", "The OTP is invalid or has expired.");
+            return "crm/verify-otp";
+        }
+
+        AdminUser adminUser = adminUserRepository.findByEmailIgnoreCase(email).orElseThrow();
+        session.setAttribute(RESET_ADMIN_ID, adminUser.getId());
+        return "redirect:/crm/reset-password";
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordPage(HttpSession session) {
+        return session.getAttribute(RESET_ADMIN_ID) == null
+                ? "redirect:/crm/forgot-password"
+                : "crm/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam String newPassword,
+                                @RequestParam String confirmPassword,
+                                HttpSession session,
+                                Model model) {
+        Long adminUserId = (Long) session.getAttribute(RESET_ADMIN_ID);
+        if (adminUserId == null) {
+            return "redirect:/crm/forgot-password";
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New password and confirmation do not match.");
+            return "crm/reset-password";
+        }
+
+        if (!passwordResetService.isValidNewPassword(newPassword)) {
+            model.addAttribute("error", "Password must be at least 12 characters and include a letter, number and special character.");
+            return "crm/reset-password";
+        }
+
+        if (!passwordResetService.resetPassword(adminUserId, newPassword)) {
+            model.addAttribute("error", "The password reset session is invalid or expired. Please request a new OTP.");
+            return "crm/reset-password";
+        }
+
+        AdminUser adminUser = adminUserRepository.findById(adminUserId).orElse(null);
+        auditService.record(adminUser, "RESET_PASSWORD", "ADMIN_USER", adminUserId, "Reset admin password using OTP");
+        session.invalidate();
+        return "redirect:/crm/login?passwordChanged";
+    }
 
     @GetMapping("/admin/new-user")
     public String newUser(Model model) {
