@@ -37,7 +37,20 @@ public class CrmController {
     }
 
     @PostMapping("/admin/new-user")
-    public String saveUser(@ModelAttribute("user") CrmUser user) {
+    public String saveUser(@ModelAttribute("user") CrmUser user, Model model) {
+        user.setEmail(user.getEmail() == null ? null : user.getEmail().trim().toLowerCase());
+        user.setPhone(user.getPhone() == null || user.getPhone().isBlank() ? null : user.getPhone().trim());
+
+        if (user.getEmail() != null && userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+            model.addAttribute("error", "A user with this email address already exists.");
+            return "crm/new-user";
+        }
+
+        if (user.getPhone() != null && userRepository.existsByPhone(user.getPhone())) {
+            model.addAttribute("error", "A user with this phone number already exists.");
+            return "crm/new-user";
+        }
+
         userRepository.save(user);
         return "redirect:/crm/admin?saved";
     }
@@ -67,8 +80,23 @@ public class CrmController {
     }
 
     @PostMapping("/admin/users/{id}/edit")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") CrmUser updatedUser) {
+    public String updateUser(@PathVariable Long id, @ModelAttribute("user") CrmUser updatedUser, Model model) {
         CrmUser user = userRepository.findById(id).orElseThrow();
+        updatedUser.setEmail(updatedUser.getEmail() == null ? null : updatedUser.getEmail().trim().toLowerCase());
+        updatedUser.setPhone(updatedUser.getPhone() == null || updatedUser.getPhone().isBlank() ? null : updatedUser.getPhone().trim());
+
+        if (updatedUser.getEmail() != null && userRepository.existsByEmailIgnoreCaseAndIdNot(updatedUser.getEmail(), id)) {
+            model.addAttribute("error", "A user with this email address already exists.");
+            model.addAttribute("user", updatedUser);
+            return "crm/edit-user";
+        }
+
+        if (updatedUser.getPhone() != null && userRepository.existsByPhoneAndIdNot(updatedUser.getPhone(), id)) {
+            model.addAttribute("error", "A user with this phone number already exists.");
+            model.addAttribute("user", updatedUser);
+            return "crm/edit-user";
+        }
+
         user.setFirstName(updatedUser.getFirstName());
         user.setLastName(updatedUser.getLastName());
         user.setEmail(updatedUser.getEmail());
