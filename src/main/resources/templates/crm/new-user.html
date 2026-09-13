@@ -5,7 +5,7 @@
 <header class="topbar"><strong>SKP LAB CRM</strong><div><a href="/crm/admin">Dashboard</a><form class="inline" method="post" th:action="@{/crm/logout}"><button class="link-button">Logout</button></form></div></header>
 <main class="container narrow">
     <h1>New User</h1>
-    <div class="alert success" th:if="${param.saved}">User saved successfully.</div>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
     <form class="card form-grid" method="post" th:action="@{/crm/admin/new-user}" th:object="${user}">
         <label>First Name<input th:field="*{firstName}" required maxlength="100"></label>
         <label>Last Name<input th:field="*{lastName}" required maxlength="100"></label>
