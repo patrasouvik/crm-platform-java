@@ -1,5 +1,6 @@
 package com.maieveen.crm.user;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,8 +20,13 @@ public class CrmUser {
 
     private String firstName;
     private String lastName;
+
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
     private String phone;
+
     private LocalDate dateOfBirth;
     private String address;
     private String suburb;
