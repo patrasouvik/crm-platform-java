@@ -1,12 +1,12 @@
 package com.maieveen.crm.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -14,24 +14,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${crm.admin.username:admin}")
-    private String adminUsername;
-
-    @Value("${crm.admin.password:change-me}")
-    private String adminPassword;
-
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    InMemoryUserDetailsManager users(PasswordEncoder passwordEncoder) {
-        UserDetails admin = User.withUsername(adminUsername)
-                .password(passwordEncoder.encode(adminPassword))
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(admin);
+    UserDetailsService userDetailsService(AdminUserRepository adminUserRepository) {
+        return username -> adminUserRepository.findByUsername(username)
+                .map(admin -> {
+                    String[] roles = admin.getRoles().stream()
+                            .map(Role::getName)
+                            .toArray(String[]::new);
+
+                    UserDetails user = User.withUsername(admin.getUsername())
+                            .password(admin.getPasswordHash())
+                            .roles(roles)
+                            .disabled(!admin.isEnabled())
+                            .build();
+                    return user;
+                })
+                .orElseThrow(() -> new UsernameNotFoundException("Admin user not found"));
     }
 
     @Bean
