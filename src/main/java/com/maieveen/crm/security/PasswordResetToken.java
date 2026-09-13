@@ -37,6 +37,9 @@ public class PasswordResetToken {
     @Column(name = "used_at")
     private LocalDateTime usedAt;
 
+    @Column(nullable = false)
+    private int attempts;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -59,6 +62,7 @@ public class PasswordResetToken {
     public LocalDateTime getExpiresAt() { return expiresAt; }
     public LocalDateTime getVerifiedAt() { return verifiedAt; }
     public LocalDateTime getUsedAt() { return usedAt; }
+    public int getAttempts() { return attempts; }
 
     public void markVerified() {
         verifiedAt = LocalDateTime.now();
@@ -66,6 +70,10 @@ public class PasswordResetToken {
 
     public void markUsed() {
         usedAt = LocalDateTime.now();
+    }
+
+    public void incrementAttempts() {
+        attempts++;
     }
 
     public boolean isExpired() {
