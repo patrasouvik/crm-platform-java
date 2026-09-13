@@ -5,15 +5,21 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:crm}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
   thymeleaf:
     cache: false
 
 crm:
   admin:
-    username: ${CRM_ADMIN_USERNAME:admin}
-    password: ${CRM_ADMIN_PASSWORD:change-me}
+    bootstrap:
+      enabled: ${CRM_ADMIN_BOOTSTRAP_ENABLED:true}
+      username: ${CRM_ADMIN_USERNAME:admin}
+      password: ${CRM_ADMIN_PASSWORD:change-me}
 
 management:
   endpoints:
