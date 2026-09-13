@@ -6,7 +6,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +19,7 @@ public class PasswordResetService {
 
     private static final Logger log = LoggerFactory.getLogger(PasswordResetService.class);
     private static final SecureRandom RANDOM = new SecureRandom();
+    private static final int MAX_OTP_ATTEMPTS = 5;
 
     private final AdminUserRepository adminUserRepository;
     private final PasswordResetTokenRepository tokenRepository;
@@ -108,7 +108,16 @@ public class PasswordResetService {
         }
 
         PasswordResetToken token = tokenOptional.get();
-        if (token.isExpired() || !passwordEncoder.matches(otp, token.getOtpHash())) {
+        if (token.isExpired() || token.getVerifiedAt() != null || token.getAttempts() >= MAX_OTP_ATTEMPTS) {
+            return false;
+        }
+
+        if (!passwordEncoder.matches(otp, token.getOtpHash())) {
+            token.incrementAttempts();
+            if (token.getAttempts() >= MAX_OTP_ATTEMPTS) {
+                token.markUsed();
+            }
+            tokenRepository.save(token);
             return false;
         }
 
@@ -119,10 +128,7 @@ public class PasswordResetService {
 
     @Transactional
     public boolean resetPassword(Long adminUserId, String newPassword) {
-        if (newPassword == null || newPassword.length() < 12
-                || !newPassword.matches(".*[A-Za-z].*")
-                || !newPassword.matches(".*\\d.*")
-                || !newPassword.matches(".*[^A-Za-z0-9].*")) {
+        if (!isValidNewPassword(newPassword)) {
             return false;
         }
 
@@ -160,23 +166,18 @@ public class PasswordResetService {
                 && password.matches(".*[^A-Za-z0-9].*");
     }
 
-    public boolean currentPasswordMatches(String username, String currentPassword) {
-        if (currentPassword == null) {
-            return false;
-        }
-        return adminUserRepository.findByUsername(username)
-                .map(admin -> passwordEncoder.matches(currentPassword, admin.getPasswordHash()))
-                .orElse(false);
-    }
-
     @Transactional
     public boolean changePassword(String username, String currentPassword, String newPassword) {
-        if (!isValidNewPassword(newPassword) || !currentPasswordMatches(username, currentPassword)) {
+        if (!isValidNewPassword(newPassword) || currentPassword == null) {
             return false;
         }
 
         AdminUser adminUser = adminUserRepository.findByUsername(username).orElse(null);
-        if (adminUser == null || passwordEncoder.matches(newPassword, adminUser.getPasswordHash())) {
+        if (adminUser == null || !passwordEncoder.matches(currentPassword, adminUser.getPasswordHash())) {
+            return false;
+        }
+
+        if (passwordEncoder.matches(newPassword, adminUser.getPasswordHash())) {
             return false;
         }
 
